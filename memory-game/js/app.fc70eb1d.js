@@ -75,13 +75,13 @@
 		e.exports = n("56d7")
 	},
 	"098f": function(e, t, n) {
-		e.exports = n.p + "../img/pubg.1f6aba1d.jpg"
+		e.exports = n.p + "https://dalice157.github.io/memory-game/pubg.1f6aba1d.jpg"
 	},
 	"0ff0": function(e, t, n) {
-		e.exports = n.p + "../img/css.06694957.png"
+		e.exports = n.p + "https://dalice157.github.io/memory-game/css.06694957.png"
 	},
 	"27be": function(e, t, n) {
-		e.exports = n.p + "../img/psGame.b4579ee0.png"
+		e.exports = n.p + "https://dalice157.github.io/memory-game/psGame.b4579ee0.png"
 	},
 	"50a3": function(e, t, n) {
 		"use strict";
@@ -372,18 +372,18 @@
 		s.a
 	},
 	"622f": function(e, t, n) {
-		e.exports = n.p + "../img/switchGame.585def46.png"
+		e.exports = n.p + "https://dalice157.github.io/memory-game/switchGame.585def46.png"
 	},
 	6493: function(e, t, n) {
-		e.exports = n.p + "../img/babel.67aa7046.png"
+		e.exports = n.p + "https://dalice157.github.io/memory-game/babel.67aa7046.png"
 	},
 	"691c": function(e, t, n) {
-		e.exports = n.p + "../img/vue.cf91a267.png"
+		e.exports = n.p + "https://dalice157.github.io/memory-game/vue.cf91a267.png"
 	},
 	"7d32": function(e, t, n) {},
 	"9c0c": function(e, t, n) {},
 	"9c9a": function(e, t, n) {
-		e.exports = n.p + "../img/mongodb.c81f0054.png"
+		e.exports = n.p + "https://dalice157.github.io/memory-game/mongodb.c81f0054.png"
 	},
 	a77f: function(e, t, n) {
 		"use strict";
