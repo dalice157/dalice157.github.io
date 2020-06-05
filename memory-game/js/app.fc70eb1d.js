@@ -392,17 +392,17 @@
 		s.a
 	},
 	b521: function(e, t, n) {
-		e.exports = n.p + "./img/webpack.5f7d5b64.png"
+		e.exports = n.p + "https://dalice157.github.io/memory-game/webpack.5f7d5b64.png"
 	},
 	cce0: function(e, t, n) {
-		e.exports = n.p + "./img/express.57c5e46e.png"
+		e.exports = n.p + "https://dalice157.github.io/memory-game/express.57c5e46e.png"
 	},
 	e004: function(e, t, n) {
-		e.exports = n.p + "./img/nodejs.c7718d20.png"
+		e.exports = n.p + "https://dalice157.github.io/memory-game/nodejs.c7718d20.png"
 	},
 	e00a: function(e, t, n) {},
 	e319: function(e, t, n) {
-		e.exports = n.p + "./img/html.05823a40.png"
+		e.exports = n.p + "https://dalice157.github.io/memory-game/html.05823a40.png"
 	}
 });
 //# sourceMappingURL=app.fc70eb1d.js.map
