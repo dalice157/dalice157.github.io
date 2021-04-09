@@ -1,0 +1,144 @@
+# ----------------------------------------------------------------------------
+# life cycle 
+# reference https://docs.travis-ci.com/user/job-lifecycle/
+# before_install -> install -> before_script -> script -> after_script
+# ----------------------------------------------------------------------------
+#  。。。◢＼　　☆　　／◣
+# 　　∕　　﹨　╰╮∕　　﹨
+# 　　▏　　～～′′～～ 　｜
+# 　　﹨／　　　　　　 　＼∕
+# 　　 / 　　●　　　 ●　 \
+#    ＝＝　○　∴·╰╯　∴　○　＝＝
+# 　   ╭──╮　　　　　╭──╮
+#    ╔═∪∪∪═════∪∪∪═╗
+#    ║　　　　　　　　　　　　　╠═╗
+#    ║　　　travis ci 　　　　║　║
+#    ║　　　　　　　　　　　　　║　║
+
+
+# ----------------------------------------------------------------------------
+# 指定使用語言
+# ----------------------------------------------------------------------------
+language: node_js
+
+
+# ----------------------------------------------------------------------------
+# 指定語言版本
+# ----------------------------------------------------------------------------
+node_js:
+  - 10.16.3
+
+
+# ----------------------------------------------------------------------------
+# 快取機制
+# ----------------------------------------------------------------------------
+cache:
+  - yarn
+
+
+# ----------------------------------------------------------------------------
+# submodules 策略
+# 說明：Travis CI默認情況下會克隆Git子模塊。
+#      為了避免這種情況需要將 submodules 設為 false。
+# ----------------------------------------------------------------------------
+git:
+  submodules: false
+
+
+# ----------------------------------------------------------------------------
+# branches 使用策略
+# 說明：
+#      依據 travis 介面上提供設定，有兩種情形可以觸發 CI CD，分別為 pushed and PR。
+#      針對branched使用白名單(only)，只有此設定下的 branches 才會觸發 CD CI。 
+#      可搜尋 travis 關鍵字 Safelisting or Blocklisting Branches
+# ----------------------------------------------------------------------------
+branches:
+  only:
+    - lab
+    - staging
+    - production
+    - /^project\/..*$/ # 任何 project 開頭的 branches
+
+
+# ----------------------------------------------------------------------------
+# before_install
+# ----------------------------------------------------------------------------
+before_install:
+    # - sed  -i "s/git+ssh:git@github.com:104corp/git+https:\/\/${GITHUB_ACCESS_TOKEN}:x-oauth-basic@github.com\/104corp/g" package.json
+    - yarn
+
+install:
+    - cypress install
+
+# ----------------------------------------------------------------------------
+# specifying stage order and conditions。 (設定工作階段順序)
+# ----------------------------------------------------------------------------
+stages:
+  # eslint 檢查
+  - lint-test
+  # 單元測試與端對端測試
+  - code-test
+  # lab or staging or production branch，在push時才會觸發。
+  - name: deploy
+    if: branch =~ /lab|staging|production/ AND type = push
+  # project branch 在 push 時才會觸發。
+  - name: preview-deploy
+    if: branch =~ /^project\/..*$/ AND type = push
+
+# ----------------------------------------------------------------------------
+# 任務項目
+# 說明： 其中一個階段若發生錯誤，就會停止。
+# ENV 分枝 lab | staging | product | project
+# ----------------------------------------------------------------------------
+jobs:
+  include:
+    - stage: lint-test
+      script: 
+        - yarn lint:${ENV}
+    - stage: code-test
+      script:
+        - yarn test:unit:${ENV}
+        - yarn test:e2e:${ENV}
+    # ----------------------------------------
+    # -- lab | staging | production deploy
+    # ----------------------------------------
+    - stage: deploy
+      script: yarn build:${ENV}
+      deploy:
+        provider: s3
+        region: ap-northeast-1
+        access_key_id: ${AWS_ACCESS_KEY_ID}
+        secret_access_key: ${AWS_SECRET_ACCESS_KEY}
+        bucket: ${S3_TARGET_BUCKET}
+        skip_cleanup: true
+        # 不想將整個項目上載到S3。可以使用該local_dir指定僅將單個文件夾上載到S3。
+        local_dir: dist
+        # 部署到特定的S3上的資料夾
+        upload_dir: chatbot
+        on:
+          branch:
+            - lab
+            - staging
+            - production
+    # ----------------------------------------
+    #  project deploy，用來預覽。
+    # ----------------------------------------
+    - stage: preview-deploy
+      env:
+        - PROJECT_DIR=$(echo $TRAVIS_BRANCH | cut -d'/' -f 2 -s)
+        - PREVIEW_DIR=$(echo b/${PROJECT_DIR})
+      script: yarn build:${ENV} --preview
+      # reference https://docs.travis-ci.com/user/deployment/s3/
+      deploy:
+        provider: s3
+        region: ap-northeast-1
+        access_key_id: ${AWS_ACCESS_KEY_ID}
+        secret_access_key: ${AWS_SECRET_ACCESS_KEY}
+        bucket: ${S3_TARGET_BUCKET}
+        skip_cleanup: true
+        # 不想將整個項目上載到S3。可以使用該local_dir指定僅將單個文件夾上載到S3。
+        local_dir: dist
+        # 部署到特定的S3上的資料夾 (預覽)
+        upload_dir: ${PREVIEW_DIR}
+        on:
+          all_branches: true
